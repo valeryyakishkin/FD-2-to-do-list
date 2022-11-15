@@ -1,11 +1,11 @@
-import { Component } from "../../core";
+import { Component } from "../../../core";
 
 export class Button extends Component {
 
-    registerEvents() {
+    componentDidMount() {
         this.addEventListener('click', () => {
             this.dispatch(this.props.eventtype);
-        })
+        });
     }
 
     static get observedAttributes() {
