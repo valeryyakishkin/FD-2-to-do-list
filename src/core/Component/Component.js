@@ -14,7 +14,7 @@ export class Component extends HTMLElement {
         this.innerHTML = this.render();
         this.componentDidMount();
     }
-    
+
     disconnectedCallback() {
         this.componentWillUnmount();
     }
