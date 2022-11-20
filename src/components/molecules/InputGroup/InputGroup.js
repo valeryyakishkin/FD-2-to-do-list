@@ -66,6 +66,17 @@ export class InputGroup extends Component {
         });
     }
 
+    onLoading () {
+        return `
+        <div 
+            class='d-flex justify-content-center position-absolute' 
+            style='z-index: 1; position: fixed; background: #000; opacity: .5; top: 0; bottom: 0; right: 0; left: 0; display: flex; align-items: center;'
+        >
+            <my-spinner></my-spinner>
+        </div>
+    `
+    }
+
     componentDidMount() {
         this.addEventListener('save-task', this.onSave);
         this.addEventListener('custom-input', this.onInput);
@@ -73,14 +84,7 @@ export class InputGroup extends Component {
 
     render() {
         return `
-        ${this.state.isLoading ? `
-            <div 
-                class='d-flex justify-content-center position-absolute' 
-                style='z-index: 1; position: fixed; background: #000; opacity: .5; top: 0; bottom: 0; right: 0; left: 0; display: flex; align-items: center;'
-            >
-                <my-spinner></my-spinner>
-            </div>
-        ` : ''}
+        ${this.state.isLoading ? this.onLoading() : ''}
         <div class="input-group mb-3">
             <my-input value="${this.state.inputValue}" placeholder="Add a new task" type="text"></my-input>
             <my-button eventtype="save-task" content="Save" classname="btn btn-outline-primary"></my-button>
