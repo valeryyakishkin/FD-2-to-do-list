@@ -1,21 +1,22 @@
 import { Component } from './core';
 import './components/molecules/InputGroup/InputGroup';
+import './components/molecules/Task/Task';
 import './components/atoms/Spinner/Spinner';
 import { todoList } from './services/todoList/TodoList';
 
 export class App extends Component {
-    constructor() {
-      super();
-      this.state = {
-        tasks: [],
-        isError: false,
-        textError: '',
-        isLoading: false,
-      }
+  constructor() {
+    super();
+    this.state = {
+      tasks: [],
+      isError: false,
+      textError: '',
+      isLoading: false,
     }
+  }
 
-    onLoading() {
-      return ` 
+  onLoading() {
+    return ` 
       <div 
         class='d-flex justify-content-center position-absolute' 
         style='z-index: 1; position: fixed; background: #000; opacity: .5; top: 0; bottom: 0; right: 0; left: 0; display: flex; align-items: center;'
@@ -23,16 +24,10 @@ export class App extends Component {
         <my-spinner></my-spinner>
       </div>
       `
-    }
+  }
 
-    componentDidMount() {
-      this.setState(state => {
-        return {
-          ...state,
-          isLoading: true,
-        };
-      });
-      todoList.getTasks()
+  getTasks() {
+    todoList.getTasks()
       .then((data) => {
         // throw new Error('Read is not available');
         this.setState((state) => {
@@ -52,43 +47,75 @@ export class App extends Component {
         });
       })
       .finally(() => {
-         this.setState(state => {
+        this.setState(state => {
           return {
             ...state,
             isLoading: false,
           }
-         })
+        })
       });
-    }
+  }
 
-    render() {
-        return `
+  saveTask = (evt) => {
+    todoList.createTask({ ...evt.detail, isCompleted: false })
+      .then(() => {
+        this.getTasks();
+      })
+  }
+
+  deleteTask = (id) => {
+    todoList.deleteTask(id)
+      .then(() => {
+        this.getTasks();
+      })
+  }
+
+  onClick = (evt) => {
+    const target = evt.target;
+    if (target.closest('.delete-action')) {
+      const data = target.dataset;
+      this.deleteTask(data.id);
+    }
+  }
+
+  componentDidMount() {
+    this.setState(state => {
+      return {
+        ...state,
+        isLoading: true,
+      };
+    });
+    this.getTasks();
+    this.addEventListener('save-task', this.saveTask);
+    this.addEventListener('click', this.onClick);
+  }
+
+  componentWillUnmount() {
+    this.removeEventListener('save-task', this.saveTask);
+    this.removeEventListener('ckick', this.onClick);
+  }
+
+  render() {
+    return `
           ${this.state.isLoading ? this.onLoading() : ''}
           <div class='container mt-5'>
-            <my-input-group></my-input-group>
+            <my-input-group type="save-task"></my-input-group>
           </div>
           <ul class="list-group">
             ${this.state.isError ? `<div style='color: red;'>${this.state.textError}</div>` : ''}
-            ${this.state.tasks.map((item) => `
-              <li class="list-group-item">
-                <div class="form-check d-flex justify-content-between align-items-center">
-                  <div>
-                    <input class="form-check-input" type="checkbox" ${item.isCompleted ? 'checked' : ''} id="flexCheckDefault">
-                    <label class="form-check-label" for="flexCheckDefault">
-                      ${item.title}
-                    </label>
-                  </div>
-                  <div class='d-flex'>
-                    <my-button content="Delete" classname="btn btn-danger btn-sm"></my-button>
-                    <my-button content="Update" classname="btn btn-primary btn-sm"></my-button>
-                  </div>
-                </div>
-              </li>
+            ${this.state.tasks
+        .sort((a, b) => a - b)
+        .map((item) => `
+              <my-task 
+                id="${item.id}" 
+                title="${item.title}" 
+                iscompleted="${item.isCompleted}"
+                ></my-task>
             `).join(' ')}
           </ul>
         `;
 
-    }
+  }
 }
 
 customElements.define('my-app', App);

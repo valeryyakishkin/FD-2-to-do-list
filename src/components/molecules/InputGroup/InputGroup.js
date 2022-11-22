@@ -1,71 +1,73 @@
 import { Component } from "../../../core";
-import { todoList } from "../../../services/todoList/TodoList";
-import '../../atoms/Button/Button';
-import '../../atoms/Input/Input';
 import '../../atoms/Spinner/Spinner';
 
 export class InputGroup extends Component {
 
-    constructor() {
-        super();
-        this.state = {
-            inputValue: '',
-            isLoading: false,
-            isError: false,
-            textError: '',
-        };
-    }
+    // constructor() {
+    //     super();
+    //     this.state = {
+    //         inputValue: '',
+    //         isLoading: false,
+    //         isError: false,
+    //         textError: '',
+    //     };
+    // }
 
-    onSave () {
-        if(this.state.inputValue) {
-            this.setState((state) => {
-                return {
-                    ...state,
-                    isLoading: true,
-                }
-            });
-            todoList.createTask({
-                title: this.state.inputValue,
-                isCompleted: false, 
-            }).then(() => {
-                // throw new Error('Save is not available');
-                this.setState((state) => {
-                    return {
-                        ...state,
-                        inputValue: '',
-                    }
-                })
-            })
-            .catch((error) => {
-                this.setState((state) => {
-                    return {
-                        ...state,
-                        isError: true,
-                        textError: error.message,
-                    }
-                })
-            })
-            .finally(() => {
-                this.setState(state => {
-                    return {
-                        ...state,
-                        isLoading: false,
-                    }
-                })
-            })
-        }
-    }
+    // onSave () {
+    //     if(this.state.inputValue) {
+    //         this.setState((state) => {
+    //             return {
+    //                 ...state,
+    //                 isLoading: true,
+    //             }
+    //         });
+    //         todoList.createTask({
+    //             title: this.state.inputValue,
+    //             isCompleted: false, 
+    //         }).then(() => {
+    //             // throw new Error('Save is not available');
+    //             this.setState((state) => {
+    //                 return {
+    //                     ...state,
+    //                     inputValue: '',
+    //                 }
+    //             })
+    //         })
+    //         .catch((error) => {
+    //             this.setState((state) => {
+    //                 return {
+    //                     ...state,
+    //                     isError: true,
+    //                     textError: error.message,
+    //                 }
+    //             })
+    //         })
+    //         .finally(() => {
+    //             this.setState(state => {
+    //                 return {
+    //                     ...state,
+    //                     isLoading: false,
+    //                 }
+    //             })
+    //         })
+    //     }
+    // }
 
-    onInput(evt) {
-        this.setState((state) => {
-            return {
-                ...state,
-                inputValue: evt.detail.value,
-            }
-        });
-    }
+    // onInput(evt) {
+    //     this.setState((state) => {
+    //         return {
+    //             ...state,
+    //             inputValue: evt.detail.value,
+    //         }
+    //     });
+    // }
 
-    onLoading () {
+    // componentDidMount() {
+    //     this.addEventListener('save-task', this.onSave);
+    //     this.addEventListener('custom-input', this.onInput);
+    // }
+
+    onLoading() {
         return `
         <div 
             class='d-flex justify-content-center position-absolute' 
@@ -76,19 +78,41 @@ export class InputGroup extends Component {
     `
     }
 
+    onSubmit = (evt) => {
+        evt.preventDefault();
+        const task = {};
+        const data = new FormData(evt.target);
+        data.forEach((value, key) => {
+            task[key] = value;
+        });
+        this.dispatch(this.props.type, task);
+    }
+
     componentDidMount() {
-        this.addEventListener('save-task', this.onSave);
-        this.addEventListener('custom-input', this.onInput);
+        this.addEventListener('submit', this.onSubmit);
+    }
+
+    componentWillUnmount() {
+        this.removeEventListener('submit', this.onSubmit);
+    }
+
+    static get observedAttributes() {
+        return ['type'];
     }
 
     render() {
         return `
         ${this.state.isLoading ? this.onLoading() : ''}
-        <div class="input-group mb-3">
-            <my-input value="${this.state.inputValue}" placeholder="Add a new task" type="text"></my-input>
-            <my-button eventtype="save-task" content="Save" classname="btn btn-outline-primary"></my-button>
-        </div>
-        ${this.state.isError ? `<div style='color: red;'>${this.state.textError}</div>` : ''}
+        <form class="input-group mb-3">
+            <input 
+                name="title"
+                type="text" 
+                class="form-control" 
+                placeholder="Add a new task"
+            >
+            <button type="submit" class="btn btn-outline-primary">Save</button>
+        </form>
+        ${this.state.isError ? `<div style="color: red;">${this.state.textError}</div>` : ''}
         `;
     }
 }
