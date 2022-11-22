@@ -33,7 +33,6 @@ export class InputGroup extends Component {
                     return {
                         ...state,
                         inputValue: '',
-                        isLoading: false,
                     }
                 })
             })

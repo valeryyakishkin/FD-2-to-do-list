@@ -38,7 +38,6 @@ export class App extends Component {
         this.setState((state) => {
           return {
             ...state,
-            isLoading: false,
             tasks: data,
           };
         });
