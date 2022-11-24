@@ -1,66 +1,71 @@
 import { Component } from "../../../core";
 
 export class Task extends Component {
-    
-    constructor() {
-        super();
-        this.state = {
-            isEditting: false,
-        }
-    }
+  constructor() {
+    super();
+    this.state = {
+      isEditting: false,
+    };
+  }
 
-    static get observedAttributes() {
-        return ['title', 'id', 'iscompleted',];
-    }
+  static get observedAttributes() {
+    return ["title", "id", "iscompleted"];
+  }
 
-    onClick = (evt) => {
-        const target = evt.target;
-        if(target.closest('.edit-action')) {
-            this.setState((state) => {
-                return {
-                    ...state,
-                    isEditting: true,
-                }
-            })
-        }
-        if(target.closest('.cancel-action')) {
-            this.setState((state) => {
-                return {
-                    ...state,
-                    isEditting: false,
-                }
-            })
-        }
+  onClick = (evt) => {
+    const target = evt.target;
+    if (target.closest(".edit-action")) {
+      this.setState((state) => {
+        return {
+          ...state,
+          isEditting: true,
+        };
+      });
     }
-    
-
-    componentDidMount() {
-        this.addEventListener('click', this.onClick);
+    if (target.closest(".cancel-action")) {
+      this.setState((state) => {
+        return {
+          ...state,
+          isEditting: false,
+        };
+      });
     }
+  };
 
-    componentWillUnmount() {
-        this.removeEventListener('click', this.onClick);
-    }
+  componentDidMount() {
+    this.addEventListener("click", this.onClick);
+  }
 
-    render() {
-        return `
+  componentWillUnmount() {
+    this.removeEventListener("click", this.onClick);
+  }
+
+  render() {
+    return `
         <li class="list-group-item">
             <div class="form-check d-flex justify-content-between align-items-center">
-                ${this.state.isEditting 
-                ? `<input 
+                ${
+                  this.state.isEditting
+                    ? `<input 
                 name="title"
                 type="edit-task" 
                 class="form-control" 
                 placeholder="Edit your task"
                 >
-                <button title="cancel" class="btn btn-dark btn-sm m-2 cancel-action">Cancel</button>
-                <button title="edit" class="btn btn-success btn-sm m-2">Confirm</button>
+                <div class='d-flex'>
+                    <button title="cancel" class="btn btn-dark btn-sm m-2 cancel-action">Cancel</button>
+                    <button title="edit" class="btn btn-success btn-sm m-2">Confirm</button>
+                </div>
                 `
-                : `
+                    : `
                     <div>
                         <input 
                             class="form-check-input" 
-                            type="checkbox" ${JSON.parse(this.props.iscompleted) ? 'checked' : ""} 
+                            type="checkbox" ${
+                              JSON.parse(this.props.iscompleted)
+                                ? "checked"
+                                : ""
+                            } 
                             id="${this.props.id}"
                         >
                         <label class="form-check-label" for="${this.props.id}">
@@ -83,13 +88,13 @@ export class Task extends Component {
             </div>
         </li>
         `;
-    }
-
+  }
 }
 
-customElements.define('my-task', Task);
+customElements.define("my-task", Task);
 
-{/* <div>
+{
+  /* <div>
             <input class="form-check-input" type="checkbox" ${
                 JSON.parse(this.props.iscompleted) ? 'checked' : ''
             } id="${this.props.id}">
@@ -104,4 +109,5 @@ customElements.define('my-task', Task);
             <button data-id="${
                 this.props.id
             }" class="btn btn-primary btn-sm m-2 edit-action">Edit</button>
-          </div> */}
+          </div> */
+}
