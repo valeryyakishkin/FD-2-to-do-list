@@ -10,7 +10,7 @@ export class Task extends Component {
     }
 
     static get observedAttributes() {
-        return ['title', 'id', 'iscompleted'];
+        return ['title', 'id', 'iscompleted',];
     }
 
     onClick = (evt) => {
@@ -23,7 +23,16 @@ export class Task extends Component {
                 }
             })
         }
+        if(target.closest('.cancel-action')) {
+            this.setState((state) => {
+                return {
+                    ...state,
+                    isEditting: false,
+                }
+            })
+        }
     }
+    
 
     componentDidMount() {
         this.addEventListener('click', this.onClick);
@@ -38,7 +47,15 @@ export class Task extends Component {
         <li class="list-group-item">
             <div class="form-check d-flex justify-content-between align-items-center">
                 ${this.state.isEditting 
-                ? `<my-input-group type="edit-task"></my-input-group>`
+                ? `<input 
+                name="title"
+                type="edit-task" 
+                class="form-control" 
+                placeholder="Edit your task"
+                >
+                <button title="cancel" class="btn btn-dark btn-sm m-2 cancel-action">Cancel</button>
+                <button title="edit" class="btn btn-success btn-sm m-2">Confirm</button>
+                `
                 : `
                     <div>
                         <input 

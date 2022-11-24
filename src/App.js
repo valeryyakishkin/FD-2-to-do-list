@@ -16,6 +16,15 @@ export class App extends Component {
   }
 
   onLoading() {
+    this.setState((state) => {
+      return {
+        ...state,
+        isLoading: true,
+      }
+    })
+  }
+
+  showPreloader() {
     return ` 
       <div 
         class='d-flex justify-content-center position-absolute' 
@@ -27,6 +36,7 @@ export class App extends Component {
   }
 
   getTasks() {
+    this.onLoading();
     todoList.getTasks()
       .then((data) => {
         // throw new Error('Read is not available');
@@ -92,19 +102,18 @@ export class App extends Component {
 
   componentWillUnmount() {
     this.removeEventListener('save-task', this.saveTask);
-    this.removeEventListener('ckick', this.onClick);
+    this.removeEventListener('click', this.onClick);
   }
 
   render() {
     return `
-          ${this.state.isLoading ? this.onLoading() : ''}
+          ${this.state.isLoading ? this.showPreloader() : ''}
           <div class='container mt-5'>
             <my-input-group type="save-task"></my-input-group>
           </div>
           <ul class="list-group">
             ${this.state.isError ? `<div style='color: red;'>${this.state.textError}</div>` : ''}
             ${this.state.tasks
-        .sort((a, b) => a - b)
         .map((item) => `
               <my-task 
                 id="${item.id}" 
