@@ -82,6 +82,9 @@ export class InputGroup extends Component {
         evt.preventDefault();
         const task = {};
         const data = new FormData(evt.target);
+        if(this.props.taskid) {
+            data.append("id", this.props.taskid);
+        }
         data.forEach((value, key) => {
             task[key] = value;
         });
@@ -97,7 +100,7 @@ export class InputGroup extends Component {
     }
 
     static get observedAttributes() {
-        return ['type'];
+        return ['type', 'value', 'isshowcancelbutton', 'taskid'];
     }
 
     render() {
@@ -109,9 +112,14 @@ export class InputGroup extends Component {
                 type="text" 
                 class="form-control" 
                 placeholder="Add a new task"
+                value="${this.props.value ?? ''}"
             >
             <button type="submit" class="btn btn-outline-primary">Save</button>
-        </form>
+            ${
+                this.props.isshowcancelbutton 
+                ? (`<button type="button" class="btn btn-outline-secondary cancel-action">Cancel</button>`) 
+                : ""}
+            </form>
         ${this.state.isError ? `<div style="color: red;">${this.state.textError}</div>` : ''}
         `;
     }

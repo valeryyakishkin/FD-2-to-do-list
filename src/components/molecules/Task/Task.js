@@ -12,24 +12,25 @@ export class Task extends Component {
     return ["title", "id", "iscompleted"];
   }
 
+  toggleEditting = () => {
+    this.setState((state) => {
+      return {
+        ...state,
+        isEditting: !state.isEditting,
+      };
+    });
+  }
+
   onClick = (evt) => {
     const target = evt.target;
     if (target.closest(".edit-action")) {
-      this.setState((state) => {
-        return {
-          ...state,
-          isEditting: true,
-        };
-      });
+      this.toggleEditting();
     }
+    
     if (target.closest(".cancel-action")) {
-      this.setState((state) => {
-        return {
-          ...state,
-          isEditting: false,
-        };
-      });
+      this.toggleEditting();
     }
+
   };
 
   componentDidMount() {
@@ -46,17 +47,13 @@ export class Task extends Component {
             <div class="form-check d-flex justify-content-between align-items-center">
                 ${
                   this.state.isEditting
-                    ? `<input 
-                name="title"
-                type="edit-task" 
-                class="form-control" 
-                placeholder="Edit your task"
-                >
-                <div class='d-flex'>
-                    <button title="cancel" class="btn btn-dark btn-sm m-2 cancel-action">Cancel</button>
-                    <button title="edit" class="btn btn-success btn-sm m-2">Confirm</button>
-                </div>
-                `
+                    ? `<my-input-group 
+                      type="edit-task" 
+                      isshowcancelbutton="true" 
+                      taskid="${this.props.id}"
+                      value="${this.props.title}"
+                      ></my-input-group>
+                  `
                     : `
                     <div>
                         <input 

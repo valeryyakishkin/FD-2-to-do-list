@@ -88,6 +88,14 @@ export class App extends Component {
     }
   }
 
+  updateTask = ({ detail }) => {
+    this.onLoading();
+    todoList.updateTask(detail.id, { title: detail.title, isCompleted: false })
+      .then(() => {
+        this.getTasks();
+      });
+  }
+
   componentDidMount() {
     this.setState(state => {
       return {
@@ -98,11 +106,13 @@ export class App extends Component {
     this.getTasks();
     this.addEventListener('save-task', this.saveTask);
     this.addEventListener('click', this.onClick);
+    this.addEventListener("edit-task", this.updateTask);
   }
 
   componentWillUnmount() {
     this.removeEventListener('save-task', this.saveTask);
     this.removeEventListener('click', this.onClick);
+    this.removeEventListener("edit-task", this.updateTask);
   }
 
   render() {
