@@ -1,8 +1,8 @@
-import { Component } from './core';
-import './components/molecules/InputGroup/InputGroup';
-import './components/molecules/Task/Task';
-import './components/atoms/Spinner/Spinner';
-import { todoList } from './services/todoList/TodoList';
+import { Component } from "./core";
+import "./components/molecules/InputGroup/InputGroup";
+import "./components/molecules/Task/Task";
+import "./components/atoms/Spinner/Spinner";
+import { todoList } from "./services/todoList/TodoList";
 
 export class App extends Component {
   constructor() {
@@ -10,9 +10,9 @@ export class App extends Component {
     this.state = {
       tasks: [],
       isError: false,
-      textError: '',
+      textError: "",
       isLoading: false,
-    }
+    };
   }
 
   onLoading() {
@@ -20,8 +20,8 @@ export class App extends Component {
       return {
         ...state,
         isLoading: true,
-      }
-    })
+      };
+    });
   }
 
   showPreloader() {
@@ -32,12 +32,13 @@ export class App extends Component {
       >
         <my-spinner></my-spinner>
       </div>
-      `
+      `;
   }
 
   getTasks() {
     this.onLoading();
-    todoList.getTasks()
+    todoList
+      .getTasks()
       .then((data) => {
         // throw new Error('Read is not available');
         this.setState((state) => {
@@ -48,7 +49,7 @@ export class App extends Component {
         });
       })
       .catch((error) => {
-        this.setState(state => {
+        this.setState((state) => {
           return {
             ...state,
             isError: true,
@@ -57,89 +58,95 @@ export class App extends Component {
         });
       })
       .finally(() => {
-        this.setState(state => {
+        this.setState((state) => {
           return {
             ...state,
             isLoading: false,
-          }
-        })
+          };
+        });
       });
   }
 
   saveTask = (evt) => {
-    todoList.createTask({ ...evt.detail, isCompleted: false })
-      .then(() => {
-        this.getTasks();
-      })
-  }
+    todoList.createTask({ ...evt.detail, isCompleted: false }).then(() => {
+      this.getTasks();
+    });
+  };
 
   deleteTask = (id) => {
-    todoList.deleteTask(id)
-      .then(() => {
-        this.getTasks();
-      })
-  }
-
-  onClick = (evt) => {
-    const target = evt.target;
-    if (target.closest('.delete-action')) {
-      const data = target.dataset;
-      this.deleteTask(data.id);
-    }
-  }
+    todoList.deleteTask(id).then(() => {
+      this.getTasks();
+    });
+  };
 
   updateTask = ({ detail }) => {
     this.onLoading();
-    todoList.updateTask(detail.id, { title: detail.title, isCompleted: false })
+    todoList
+      .updateTask(detail.id, { title: detail.title, isCompleted: false })
       .then(() => {
         this.getTasks();
       });
-  }
+  };
+
+  onClick = (evt) => {
+    const target = evt.target;
+    if (target.closest(".delete-action")) {
+      const data = target.dataset;
+      this.deleteTask(data.id);
+    }
+  };
 
   componentDidMount() {
-    this.setState(state => {
+    this.setState((state) => {
       return {
         ...state,
         isLoading: true,
       };
     });
     this.getTasks();
-    this.addEventListener('save-task', this.saveTask);
-    this.addEventListener('click', this.onClick);
+    this.addEventListener("save-task", this.saveTask);
     this.addEventListener("edit-task", this.updateTask);
+    this.addEventListener("click", this.onClick);
   }
 
   componentWillUnmount() {
-    this.removeEventListener('save-task', this.saveTask);
-    this.removeEventListener('click', this.onClick);
+    this.removeEventListener("save-task", this.saveTask);
     this.removeEventListener("edit-task", this.updateTask);
+    this.removeEventListener("click", this.onClick);
   }
 
   render() {
     return `
-          ${this.state.isLoading ? this.showPreloader() : ''}
+          ${this.state.isLoading ? this.showPreloader() : ""}
           <div class='container mt-5'>
             <my-input-group type="save-task"></my-input-group>
           </div>
           <ul class="list-group">
-            ${this.state.isError ? `<div style='color: red;'>${this.state.textError}</div>` : ''}
+            ${
+              this.state.isError
+                ? `<div style='color: red;'>${this.state.textError}</div>`
+                : ""
+            }
             ${this.state.tasks
-        .map((item) => `
+              .map(
+                (item) => `
               <my-task 
                 id="${item.id}" 
                 title="${item.title}" 
-                iscompleted="${item.isCompleted}"
+                iscompleted="${JSON.stringify(item.isCompleted)}"
                 ></my-task>
-            `).join(' ')}
+            `
+              )
+              .join(" ")}
           </ul>
         `;
-
   }
 }
 
-customElements.define('my-app', App);
+customElements.define("my-app", App);
 
-{/* <ul class="list-group">
+{
+  /* <ul class="list-group">
   <li class="list-group-item">
     <div class="form-check d-flex justify-content-between align-items-center">
       <div>
@@ -154,4 +161,5 @@ customElements.define('my-app', App);
         </div>
     </div>
   </li>
-</ul> */}
+</ul> */
+}

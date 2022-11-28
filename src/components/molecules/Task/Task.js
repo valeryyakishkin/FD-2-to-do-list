@@ -19,18 +19,17 @@ export class Task extends Component {
         isEditting: !state.isEditting,
       };
     });
-  }
+  };
 
   onClick = (evt) => {
     const target = evt.target;
     if (target.closest(".edit-action")) {
       this.toggleEditting();
     }
-    
+
     if (target.closest(".cancel-action")) {
       this.toggleEditting();
     }
-
   };
 
   componentDidMount() {
